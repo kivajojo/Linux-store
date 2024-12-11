@@ -1,0 +1,79 @@
+{% extends "health_record/base.html" %}
+
+{% block title %}{{ elderly.name }}的健康档案 - 老年人健康档案平台{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- 基本信息卡片 -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">基本信息</h5>
+            <a href="{% url 'health_records:elderly_update' elderly.id %}" class="btn btn-primary btn-sm">
+                编辑信息
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>姓名：</strong>{{ elderly.name }}</p>
+                    <p><strong>性别：</strong>{{ elderly.get_gender_display }}</p>
+                    <p><strong>出生日期：</strong>{{ elderly.birth_date }}</p>
+                    <p><strong>联系电话：</strong>{{ elderly.phone }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>居住地址：</strong>{{ elderly.address }}</p>
+                    <p><strong>紧急联系人：</strong>{{ elderly.emergency_contact }}</p>
+                    <p><strong>紧急联系电话：</strong>{{ elderly.emergency_phone }}</p>
+                    <p><strong>既往病史：</strong>{{ elderly.medical_history|default:"无" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 健康记录卡片 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">健康记录</h5>
+            <a href="{% url 'health_records:record_create' elderly_id=elderly.id %}" class="btn btn-primary">
+                添加记录
+            </a>
+        </div>
+        <div class="card-body">
+            {% if records %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>血压</th>
+                                <th>心率</th>
+                                <th>血糖</th>
+                                <th>体重</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in records %}
+                            <tr>
+                                <td>{{ record.date }}</td>
+                                <td>{{ record.blood_pressure }} mmHg</td>
+                                <td>{{ record.heart_rate }} 次/分</td>
+                                <td>{{ record.blood_sugar }} mmol/L</td>
+                                <td>{{ record.weight }} kg</td>
+                                <td>
+                                    <a href="{% url 'health_records:record_detail' elderly_id=elderly.id record_id=record.id %}" class="btn btn-sm btn-primary">查看</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    暂无健康记录，请点击"添加记录"按钮添加。
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

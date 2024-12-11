@@ -1,0 +1,101 @@
+{% extends "health_record/base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">健康状况分析</h2>
+    
+    <!-- 图表区域 -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-center">血压趋势图</h5>
+                    <canvas id="bpChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-center">心率趋势图</h5>
+                    <canvas id="heartRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-center">血糖趋势图</h5>
+                    <canvas id="bloodSugarChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="text-center">体重趋势图</h5>
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 健康趋势分析 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>健康趋势分析</h5>
+        </div>
+        <div class="card-body">
+            <h6>血压趋势</h6>
+            <p>平均收缩压: {{ blood_pressure_analysis.average_systolic }} mmHg</p>
+            <p>平均舒张压: {{ blood_pressure_analysis.average_diastolic }} mmHg</p>
+        </div>
+    </div>
+    
+    <!-- 在图表区域后添加 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">健康风险分析</h5>
+        </div>
+        <div class="card-body">
+            {% if risks %}
+                {% for risk in risks %}
+                    <div class="alert alert-{% if risk.level == 'high' %}danger{% else %}warning{% endif %} mb-3">
+                        <h6 class="alert-heading">{{ risk.description }}</h6>
+                        {% if risk.recommendations %}
+                            <hr>
+                            <p class="mb-0">建议：</p>
+                            <ul class="mb-0">
+                                {% for recommendation in risk.recommendations %}
+                                    <li>{{ recommendation }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-success">
+                    <h6 class="alert-heading">目前未发现明显健康风险</h6>
+                    <p class="mb-0">建议继续保持良好的生活习惯，定期进行健康检查。</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- 图表数据 -->
+<script id="chartData" type="application/json">
+    {{ chart_data|safe }}
+</script>
+
+<!-- 引入图表初始化脚本 -->
+<script src="{% static 'health_records/js/charts.js' %}"></script>
+{% endblock %}

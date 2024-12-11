@@ -1,0 +1,157 @@
+{% extends "health_record/base.html" %}
+
+{% block title %}健康数据统计 - 老年人健康档案平台{% endblock %}
+
+{% block extra_head %}
+<!-- 添加 Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">健康数据统计</h2>
+
+    {% if has_records %}
+        <!-- 图表容器 -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card fade-in">
+                    <div class="card-body chart-container">
+                        <h5 class="card-title text-success mb-4">
+                            <i class="fas fa-chart-line me-2"></i>血压趋势
+                        </h5>
+                        <canvas id="bloodPressureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">心率趋势</h5>
+                        <canvas id="heartRateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">血糖趋势</h5>
+                        <canvas id="bloodSugarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">体重趋势</h5>
+                        <canvas id="weightChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图表初始化脚本 -->
+        <script>
+            // 血压图表
+            const bpCtx = document.getElementById('bloodPressureChart').getContext('2d');
+            new Chart(bpCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ dates|safe }},
+                    datasets: [{
+                        label: '血压',
+                        data: {{ blood_pressures|safe }},
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+
+            // 心率图表
+            const hrCtx = document.getElementById('heartRateChart').getContext('2d');
+            new Chart(hrCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ dates|safe }},
+                    datasets: [{
+                        label: '心率',
+                        data: {{ heart_rates|safe }},
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+
+            // 血糖图表
+            const bsCtx = document.getElementById('bloodSugarChart').getContext('2d');
+            new Chart(bsCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ dates|safe }},
+                    datasets: [{
+                        label: '血糖',
+                        data: {{ blood_sugars|safe }},
+                        borderColor: 'rgb(54, 162, 235)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+
+            // 体重图表
+            const weightCtx = document.getElementById('weightChart').getContext('2d');
+            new Chart(weightCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ dates|safe }},
+                    datasets: [{
+                        label: '体重',
+                        data: {{ weights|safe }},
+                        borderColor: 'rgb(153, 102, 255)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        </script>
+    {% else %}
+        <div class="alert alert-info">
+            暂无数据记录，请先添加一些健康记录。
+            <a href="{% url 'health_records:record_create' %}" class="btn btn-primary ms-3">添加记录</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

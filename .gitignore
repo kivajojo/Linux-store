@@ -1,0 +1,13 @@
+# 在项目根目录创建 .gitignore 文件,添加以下内容
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+db.sqlite3
+.idea/
+.vscode/
+*.log
