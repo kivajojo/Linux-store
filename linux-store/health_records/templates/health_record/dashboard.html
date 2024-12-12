@@ -1,0 +1,82 @@
+{% extends "health_record/base.html" %}
+
+{% block title %}仪表盘 - 老年人健康档案平台{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">健康记录仪表盘</h2>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row mb-4">
+        <div class="col">
+            <a href="{% url 'health_records:record_create' %}" class="btn btn-primary">
+                添加新记录
+            </a>
+        </div>
+    </div>
+
+    <!-- 个人基本信息卡片 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">个人基本信息</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>姓名：</strong>{{ user.name|default:'未填写' }}</p>
+                    <p><strong>性别：</strong>{{ user.get_gender_display|default:'未填写' }}</p>
+                    <p><strong>联系电话：</strong>{{ user.phone|default:'未填写' }}</p>
+                    <p><strong>出生日期：</strong>{{ user.birth_date|date:'Y-m-d'|default:'未填写' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>紧急联系人：</strong>{{ user.emergency_contact|default:'未填写' }}</p>
+                    <p><strong>紧急联系电话：</strong>{{ user.emergency_phone|default:'未填写' }}</p>
+                    <p><strong>既往病史：</strong>{{ user.medical_history|default:'无' }}</p>
+                </div>
+            </div>
+            <div class="text-end">
+                <a href="{% url 'health_records:profile_update' %}" class="btn btn-primary btn-sm">
+                    编辑个人信息
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if records %}
+        <div class="row">
+            {% for record in records %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ record.date }}</h5>
+                        <p class="card-text">
+                            <strong>血压：</strong>{{ record.blood_pressure }}<br>
+                            <strong>心率：</strong>{{ record.heart_rate }}<br>
+                            <strong>血糖：</strong>{{ record.blood_sugar }}<br>
+                            <strong>体重：</strong>{{ record.weight }}
+                        </p>
+                        <a href="{% url 'health_records:record_detail' record.id %}" class="btn btn-sm btn-info">
+                            查看详情
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            暂无健康记录，请点击"添加新记录"按钮创建记录。
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "health_record/base.html" %}
+
+{% block title %}添加老年人 - 老年人健康档案平台{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">{% if elderly %}编辑{% else %}添加{% endif %}老年人信息</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label">姓名</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               value="{{ elderly.name|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="gender" class="form-label">性别</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="">请选择性别</option>
+                            <option value="M" {% if elderly.gender == 'M' %}selected{% endif %}>男</option>
+                            <option value="F" {% if elderly.gender == 'F' %}selected{% endif %}>女</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="birth_date" class="form-label">出生日期</label>
+                        <input type="date" class="form-control" id="birth_date" name="birth_date"
+                               value="{{ elderly.birth_date|date:'Y-m-d'|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="phone" class="form-label">联系电话</label>
+                        <input type="tel" class="form-control" id="phone" name="phone"
+                               value="{{ elderly.phone|default:'' }}" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="address" class="form-label">居住地址</label>
+                    <input type="text" class="form-control" id="address" name="address"
+                           value="{{ elderly.address|default:'' }}" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="emergency_contact" class="form-label">紧急联系人</label>
+                        <input type="text" class="form-control" id="emergency_contact" name="emergency_contact"
+                               value="{{ elderly.emergency_contact|default:'' }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="emergency_phone" class="form-label">紧急联系电话</label>
+                        <input type="tel" class="form-control" id="emergency_phone" name="emergency_phone"
+                               value="{{ elderly.emergency_phone|default:'' }}" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="medical_history" class="form-label">既往病史</label>
+                    <textarea class="form-control" id="medical_history" name="medical_history" rows="3">{{ elderly.medical_history|default:'' }}</textarea>
+                </div>
+
+                <div class="text-end">
+                    <a href="{% url 'health_records:elderly_list' %}" class="btn btn-secondary">返回</a>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

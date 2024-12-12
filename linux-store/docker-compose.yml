@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - MYSQL_DATABASE=elderly_health
+      - MYSQL_USER=jojo
+      - MYSQL_PASSWORD=123456
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+    command: >
+      sh -c "
+        sleep 15 &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=elderly_health
+      - MYSQL_USER=jojo
+      - MYSQL_PASSWORD=123456
+      - MYSQL_ROOT_PASSWORD=123456
+      - TZ=Asia/Shanghai
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --skip-character-set-client-handshake
+      - --default-time-zone=+8:00
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

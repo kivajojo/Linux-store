@@ -1,0 +1,20 @@
+#Web框架
+Django==3.2.0
+djangorestframework==3.14.0
+django-cors-headers==3.13.0
+
+numpy
+scipy
+pandas
+mysqlclient==2.0.3
+
+
+#API文档
+drf-yasg==1.21.5
+
+#跨域支持
+
+#其他工具包
+python-dateutil==2.8.2
+requests==2.30.0
+Pillow==9.5.0  # 图像处理

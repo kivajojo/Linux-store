@@ -1,0 +1,112 @@
+{% extends "health_record/base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">{% if is_update %}编辑{% else %}添加{% endif %}健康记录</h5>
+        </div>
+        <div class="card-body">
+	    <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- 基础健康指标 -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="date" class="form-label">记录日期</label>
+                        <input type="date" class="form-control" id="date" name="date"
+                               value="{{ record.date|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="blood_pressure" class="form-label">血压 (mmHg)</label>
+                        <input type="text" class="form-control" id="blood_pressure" name="blood_pressure"
+                               value="{{ record.blood_pressure }}" placeholder="例如: 120/80" required>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="heart_rate" class="form-label">心率 (次/分)</label>
+                        <input type="number" class="form-control" id="heart_rate" name="heart_rate"
+                               value="{{ record.heart_rate }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="blood_sugar" class="form-label">血糖 (mmol/L)</label>
+                        <input type="number" class="form-control" id="blood_sugar" name="blood_sugar"
+                               value="{{ record.blood_sugar }}" step="0.1">
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="weight" class="form-label">体重 (kg)</label>
+                        <input type="number" class="form-control" id="weight" name="weight"
+                               value="{{ record.weight }}" step="0.1">
+                    </div>
+                </div>
+
+                <!-- 日常活动记录 -->
+                <h5 class="mb-3">日常活动记录</h5>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="activity_type" class="form-label">活动类型</label>
+                        <input type="text" class="form-control" id="activity_type" name="activity_type"
+                               value="{{ record.activity_type }}" placeholder="例如: 散步、太极拳">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="activity_duration" class="form-label">活动时长 (分钟)</label>
+                        <input type="number" class="form-control" id="activity_duration" name="activity_duration"
+                               value="{{ record.activity_duration }}">
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="sleep_hours" class="form-label">睡眠时长 (小时)</label>
+                        <input type="number" class="form-control" id="sleep_hours" name="sleep_hours"
+                               value="{{ record.sleep_hours }}" step="0.5">
+                    </div>
+                </div>
+
+                <!-- 饮食记录 -->
+                <h5 class="mb-3">饮食记录</h5>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label for="breakfast" class="form-label">早餐</label>
+                        <input type="text" class="form-control" id="breakfast" name="breakfast"
+                               value="{{ record.breakfast }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="lunch" class="form-label">午餐</label>
+                        <input type="text" class="form-control" id="lunch" name="lunch"
+                               value="{{ record.lunch }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dinner" class="form-label">晚餐</label>
+                        <input type="text" class="form-control" id="dinner" name="dinner"
+                               value="{{ record.dinner }}">
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="water_intake" class="form-label">饮水量 (升)</label>
+                        <input type="number" class="form-control" id="water_intake" name="water_intake"
+                               value="{{ record.water_intake }}" step="0.1">
+                    </div>
+                </div>
+	 	    <div class="text-end mt-4">
+   			{% if is_update %}
+        			<a href="{% url 'health_records:record_detail' elderly.id record.id %}" class="btn btn-secondary">返回</a>
+       				<button type="submit" class="btn btn-success">保存更改</button>
+   			{% else %}
+       				<a href="{% url 'health_records:elderly_detail' elderly.id %}" class="btn btn-secondary">返回</a>
+        			<button type="submit" class="btn btn-success">保存</button>
+    			{% endif %}
+		    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

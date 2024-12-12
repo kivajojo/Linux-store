@@ -1,0 +1,113 @@
+{% extends "health_record/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>健康状况分析 - {{ elderly.name }}</h2>
+    
+    {% if error_message %}
+        <div class="alert alert-danger">
+            {{ error_message }}
+        </div>
+    {% endif %}
+    
+    {% if not has_sufficient_data %}
+        <div class="alert alert-info">
+            <h5>数据记录不足</h5>
+            <p>当前有效记录数：{{ records_count }}条</p>
+            <p>还需要添加：{{ records_needed }}条记录才能进行趋势分析</p>
+            <p>{{ message }}</p>
+            <a href="{% url 'health_records:record_create' elderly.id %}" class="btn btn-primary mt-2">
+                添加健康记录
+            </a>
+        </div>
+    {% else %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>血压趋势分析</h5>
+            </div>
+            <div class="card-body">
+                <p>平均收缩压：{{ analysis_results.average_systolic|floatformat:0 }} mmHg</p>
+                <p>平均舒张压：{{ analysis_results.average_diastolic|floatformat:0 }} mmHg</p>
+                <p>趋势：
+                    {% if analysis_results.trend == 'up' %}
+                        <span class="text-danger">上升</span>
+                    {% else %}
+                        <span class="text-success">下降</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- 添加调试信息 -->
+    <div class="d-none">
+        Debug Info:
+        Elderly ID: {{ elderly.id }}
+        Record ID: {{ record.id }}
+    </div>
+
+    <!-- 删除按钮 -->
+    <div class="mt-3">
+        <form method="POST" action="{% url 'health_records:delete_record' elderly.id record.id %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" onclick="return confirm('确定要删除这条记录吗？');">
+                <i class="fas fa-trash"></i> 删除记录
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认删除</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这条健康记录吗？此操作不可恢复。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% csrf_token %}
+
+<script>
+function deleteRecord() {
+    if (!confirm('确定要删除这条记录吗？')) {
+        return;
+    }
+    
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch(`{% url 'health_records:delete_record' elderly.id record.id %}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            window.location.href = "{% url 'health_records:elderly_detail' elderly.id %}";
+        } else {
+            alert('删除失败：' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('删除失败，请稍后重试');
+    });
+}
+
+console.log("Elderly ID:", {{ elderly.id }});
+console.log("Record ID:", {{ record.id }});
+</script>
+{% endblock %}
