@@ -1,3 +1,3 @@
 # Linux-store
-Linux大作业
+Linux
 一个智能健康老年人平台
